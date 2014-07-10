@@ -1,0 +1,67 @@
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+
+/**
+ *Sets up the coordinates and variables used in the creation of the back of the card.
+ *Notice that the values used are all equal to the ones used in the Card value, so that the cards are
+ *equal size and shape and they match well. 
+ *It sets up xA and yA which are used to define the upper right hand corner of the card, which is what the
+ *back graphic is based on.
+ *
+ */
+public class BackCard 
+{
+	private final int WIDTH = 80; 
+	private final int LENGTH = 100;
+	private final int ARC_WIDTH = 20;
+	private final int ARC_HEIGHT = 20;
+	private int xA, yA;
+
+	/**
+	 *This method draws a blank screen for the card, with a black outline, and the arcs in the corners
+	 */
+	private void drawBlank (Graphics pane)
+	{
+
+		pane.setColor(Color.black); 			
+		pane.drawRoundRect(xA, yA, WIDTH, LENGTH, ARC_WIDTH, ARC_HEIGHT);	 
+	}
+	/**
+	 * In order for the Happy face to come out correctly, I used the Graphics 2D pane so that the Arc drawn
+	 * could be thicker, this meant that many of the other painted objects, (lines around the cards, buttons and
+	 * bargraph increment) would have been affected and therefore needed their own basicStrokes set to 1 so 
+	 * everything would correctly render. The back of the card is set to pink, and a yellow smiley face is drawn
+	 * in the center of the screen. The basic stroke is reset right before the arc so that none of the other parts
+	 * of the card are affected. 
+	 * 
+	 */
+	public void paint (Graphics pane)
+	{
+		Graphics2D g =(Graphics2D) pane;
+		g.setStroke(new BasicStroke(1));
+
+		pane.setColor(Color.pink);
+		pane.fillRoundRect(xA, yA, WIDTH, LENGTH, ARC_WIDTH, ARC_HEIGHT);
+		drawBlank(pane);
+		pane.setColor(Color.yellow);
+		pane.fillOval(xA +5,yA +15, 70,70);
+		pane.setColor(Color.black);
+		pane.fillOval(xA +20, yA +35, 15, 15);
+		pane.fillOval(xA + 45, yA +35, 15, 15);
+		g.setStroke(new BasicStroke(3));
+		pane.drawArc(xA+ 25, yA+45, 30, 30, 180, 180);
+
+	}
+	/**
+	 * This is the setup value to hold a simple xA and xY value, which will be passed into the method, and used
+	 * within the class in order to draw the card correctly. 
+	 */
+	public void setup(int someX, int someY)
+	{
+		xA = someX;			
+		yA = someY;			
+
+	}
+}
