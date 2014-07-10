@@ -1,0 +1,49 @@
+import javax.swing.JOptionPane;
+
+/**
+ * Mini-War: The tiny game of war
+ * This is the main class of the program which sets up the main game table
+ * and tells the user the rules of the game (how the game works and how each
+ * person wins
+ * This method sets up the frame/table which the other classes build upon, 
+ * setting buttons, cards and card backs, counting scores, and monitoring
+ * the game, which is why it is important to make it public, so that it is
+ * Accessible to all (public) but unchangeable (static)
+ */
+public class Program4 {
+	/**
+	 *   The main method creates the constructor of the game, which is used
+	 *   and built upon by all other classes in the program.
+	 *   This method will present the user with an option to choose if they would like to read an explanation 
+	 *   of the rules of War, which would be especially helpful for new and returning users.
+	 *   Returning users can select no, and jump right into the game, and new users can have a explanation
+	 *   of the rules before starting. 
+	 */
+	public static void main(String[] args)
+
+	{
+		int choice = JOptionPane.showConfirmDialog(null,"Welcome to The Game of War! "
+				+ "\n Would you like an explanation of the rules "
+				+ "of the game?", "Ready to Play War?", JOptionPane.YES_NO_OPTION);
+		if(choice == 0){  //0 is the input for a user choosing "yes" and prompts an explanation of the rules. 
+			JOptionPane.showMessageDialog(null," Lets Learn the Rules of War!"
+					+ "\n"
+					+ "\n Each Round will consist of one set of cards."
+					+ "\n The hand with"
+					+ " the higher card wins! The bar graph on the bottom will display"
+					+ "\n how many wins each player (red and green have)"
+					+ "\n If a Tie occurs, the score will not change until the tie is broken"
+					+ "\nThe winner will recieve double the points for winning a tie break"
+					+ "\n to end the game, simply press the 'Quit' box, and I'll"
+					+ "show you who won. \n for a rematch, hit the 'reset'"
+					+ "and the counter will automatically be reset to zero!"
+					+ "\n"
+					+ "\n"
+					+ "\n Good Luck and Enjoy the Game!", "Rules of the Game", JOptionPane.INFORMATION_MESSAGE);
+		}
+		Game myGameTable = new Game();	
+	}	
+
+
+
+}
