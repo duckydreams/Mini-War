@@ -1,0 +1,239 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Polygon;
+
+/**
+ * @author Shannon Brady
+ * Program 4: Mini War
+ * The Card class sets up all the initial values for the card, (it's height, width,
+ * the curves in the corners of the card) as well as the xA and yA coordinates which
+ * will be called in other areas of the program to base graphics off of.
+ * It sets the upper left hand coordinates of the card. It sets how the face 
+ * is drawn, how the suit is drawn and where the card value is drawn on the card.
+ * 
+ * It also sets up the value and suit for the card
+
+ */
+public class Card {
+
+	private final int WIDTH = 80; 
+	private final int LENGTH = 100;
+	private final int CIRC_WIDTH = 20;
+	private final int CIRC_LENGTH = 20;
+	private final int ARC_WIDTH = 20;
+	private final int ARC_HEIGHT = 20;
+	private int xA, yA;
+	private int value;
+	private int suit;
+
+	private Polygon poly;
+
+
+
+	/**
+	 * 
+	 * the drawBlank() will draw the blank line of the card
+	 *  shapes the blank card, which will be drawn on later
+	 *  gets passed the values set up before at the beginning of the card class
+
+	 */
+	private void drawBlank (Graphics pane)
+	{
+
+		pane.setColor(Color.black); 			
+
+		pane.drawRoundRect(xA, yA, WIDTH, LENGTH, ARC_WIDTH, ARC_HEIGHT);	 
+	}
+
+
+	/**
+	 * The drawHeart method will draw and fill, but not yet paint any card 
+	 * randomly chosen to have a heart on it. It is composed of a polygon called
+	 * in the polygon method already previously defined. 
+	 * The heart is composed of two simple circles built around the xA and yA 
+	 * coordinates, and a simple triangle which will all over lap to fom a heart
+	 * shape. Filled in you will never see outlines inside the shape.
+	 *
+
+	 */
+	private void drawHeart (Graphics pane)
+	{
+		pane.setColor(Color.red);
+		pane.fillOval((xA+(WIDTH/3)), (yA+(LENGTH/3)), CIRC_WIDTH, CIRC_LENGTH);
+		pane.fillOval((xA+(WIDTH/2)), (yA+(LENGTH/3)), CIRC_WIDTH, CIRC_LENGTH);
+
+		poly = new Polygon();
+		poly.addPoint(xA + (WIDTH/2) + 3, yA + 65);
+		poly.addPoint(xA + 29, yA + LENGTH/2);
+		poly.addPoint(xA + 58, yA + LENGTH/2);
+		pane.fillPolygon(poly);
+
+	}
+	/**
+	 * 
+	 *  drawDiamond method is composed of two polygons which are triangles
+	 * with points at opposite ends, that meet in the middle to form the
+	 * diamond shape. It uses both the xA and yA coordinates and the undefined
+	 * polygon.
+	 * Just like the heart methods you draw it in this method but nothing
+	 * is painted until later.
+
+	 */
+	private void drawDiamond(Graphics pane)
+	{
+		pane.setColor(Color.red);
+		poly = new Polygon();
+		poly.addPoint(xA + (WIDTH/2) + 3, yA + 70);//top
+		poly.addPoint(xA + 30, yA + LENGTH/2);//lower left
+		poly.addPoint(xA + 55, yA + LENGTH/2);//lower right
+		pane.fillPolygon(poly);
+
+		poly = new Polygon();
+		poly.addPoint(xA + (WIDTH/2) + 3, yA + 30);//top
+		poly.addPoint(xA + 30, yA + LENGTH/2);//lower left
+		poly.addPoint(xA + 55, yA + LENGTH/2);//lower right
+		pane.fillPolygon(poly);
+	}
+	/**
+	 * 
+	 * The drawSpade method is one of the two black suits, and it draws a spade, 
+	 * out of two ovals on the bottom, one triangle at the top, and a small 
+	 * rectangle as the stem, common to all the other shapes, it uses the 
+	 * polygon and xA yA which are defined at the beginning of the class.
+
+	 */
+	private void drawSpade(Graphics pane)
+	{
+		pane.setColor(Color.black);
+		pane.fillOval((xA+(WIDTH/3)), (yA+(LENGTH-55)), CIRC_WIDTH, CIRC_LENGTH);
+		pane.fillOval((xA+(WIDTH/2)), (yA+(LENGTH-55)), CIRC_WIDTH, CIRC_LENGTH);
+
+		poly = new Polygon();
+		poly.addPoint(xA + (WIDTH/2) + 3, yA + 30);//top
+		poly.addPoint(xA + 27, yA + LENGTH/2);//lower left
+		poly.addPoint(xA + 58, yA + LENGTH/2);//lower right
+		pane.fillPolygon(poly);
+
+		pane.fillRect(xA + WIDTH/2, yA + LENGTH-40, 7, 10);
+
+
+
+
+	}
+	/**
+	 *the drawClub method is composed of three circles interconnected and 
+	 *overlapping forming the club shape with a rectangle on the bottom, much
+	 *like in the club shape.
+	 *This method doesn't call or need the polygon, but does call for xA and yA
+	 *Exactly like in the other methods there is no  painting, which is all done
+	 *in a separate method.
+
+	 */
+	private void drawClub(Graphics pane)
+	{
+		pane.setColor(Color.black);
+		pane.fillOval((xA+(WIDTH/3)), (yA+(LENGTH-55)), CIRC_WIDTH, CIRC_LENGTH);
+		pane.fillOval((xA+(WIDTH/2)), (yA+(LENGTH-55)), CIRC_WIDTH, CIRC_LENGTH);
+
+		pane.fillOval((xA+(WIDTH-47)), (yA+(LENGTH/3)), CIRC_WIDTH, CIRC_LENGTH);
+
+		pane.fillRect(xA + WIDTH/2, yA + LENGTH-40, 7, 10);
+	}
+	/**
+	 *The drawSuit method defines only the suit drawn on the card, assigning
+	 *it using the suit variable defined in the setup method. It sets the suit,
+	 *but like the blank, and the suits themselves, paints nothing, it sets it
+	 *to be passed, and painted in the paint method.  
+	 *
+	 */
+	private void drawSuit (Graphics pane)
+	{
+		if (suit == 1) 
+		{
+			drawHeart(pane);
+		}
+		else if (suit == 2) 
+		{
+			drawDiamond(pane);
+		}
+		else if (suit == 3) 
+		{
+			drawSpade(pane);
+		}
+		else if (suit == 4) 
+		{
+			drawClub(pane);
+		}
+	}
+	/**
+	 * The cardNum method is a method which places the number on the top right
+	 * hand of the card, it is basically.  Because the number/value is randomly
+	 * chosen, each is assigned to a number. 1-10 like on a standard deck,
+	 * then moveOverNum will place the value (1-10 then Jack, Queen, King, Ace)
+	 * on the card, moveOvernum will decide how far over to set the value
+	 */
+	private void placeNum (Graphics pane)
+	{
+		pane.setColor(Color.black);
+
+		int moveOverNum = 14;  
+
+		if (value == 13)
+		{
+
+			pane.drawString("A", (xA-4  + moveOverNum), (yA+moveOverNum));
+		}
+		else if (value == 12)
+		{
+
+			pane.drawString("K", (xA -4 + moveOverNum), (yA+moveOverNum));
+		}
+		else if (value == 11)
+		{
+
+			pane.drawString("Q", (xA-4 + moveOverNum), (yA+moveOverNum));
+		}
+		else if (value == 10)
+		{
+
+			pane.drawString("J", (xA-4  + moveOverNum), (yA+moveOverNum));
+		}
+		else
+		{
+
+			pane.drawString(Integer.toString(value+1), (xA -4 + moveOverNum), (yA+moveOverNum));
+		}
+	}
+	/**
+	 * Before I mentioned that the Suit methods only drew, but did not paint the 
+	 * suits. The paint method does all the painting, and takes what it's drawing
+	 * from the drawBlank, drawSuit, and cardNum methods and it will 
+	 * draw the entire card.
+	 */
+	public void paint(Graphics pane)
+	{
+		drawBlank(pane); 
+		drawSuit(pane); 
+		placeNum(pane); 
+	}
+
+
+	/**
+	 * The setup method sets up xA,yA, and someValue and someSuit (xA and yA
+	 * where both previously named) these will set the values of the variables
+	 * so that numbers can be passed into it each time the program is run.
+	 * This method changes the values of the instance variables to 
+	 * be what value is passed into it later. 
+
+	 */
+	public void setup(int someX, int someY, int someValue, int someSuit)
+	{
+		xA = someX;			
+
+		yA = someY;			
+		value = someValue;	
+		suit = someSuit;    
+	}
+
+
+}
