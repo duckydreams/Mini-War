@@ -1,0 +1,307 @@
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.*;
+/**
+ * The Games Class uses MouseListener to receive mouseclicks on the buttons created in the buttons
+ * class. It sets up the basic window which the game is played in, and places the different
+ * parts of the game. The button which is created in the button class is customised in this class
+ * and it defines where they are, what they look like and what they do (reset, play, quit)
+ * The Games class, much like the dice game, holds all the rules of the game that were already
+ * presented to the user. These rules are used so that the program can judge a winner, by comparing
+ * suits and values. It paints everything onto the actual game method. (Other methods "paint" a card or cardback
+ * for existence, but everything appears to the  and is painted onto the actual game screen in this method. 
+ */
+public class Game extends Frame implements MouseListener
+{
+	/**
+	 * Creates two sets of cards and cards back, left and right, each of which has a front and back (two seperate
+	 * piles) and this creates four separate card objects a front and back for each player/user
+	 * The bargraph is also created in here to keep track of the score for each of the players.
+	 */
+
+
+	private BackCard leftSideBack= new BackCard();
+
+	private BackCard rightSideBack= new BackCard();
+
+	private Card leftCard = new Card();
+
+	private Card rightCard = new Card();
+
+	private BarGraph graph = new BarGraph();
+
+
+
+	/**
+	 * The Button class creates three separate buttons, playButton, and quitButton, so that they can all be 
+	 * initalized but customized differently as they all do different things. We use intialization to see if the 
+	 * buttons have been intialized and the paintIt to see if the buttons are painted. Both have to be set to 
+	 * false in the beginning. This allows the program to intialize the buttons before they try and paint them.
+	 * This allows the program to intialize in a more logical way/order.
+	 * 
+	 * values are stored in the button class, xCoord and yCoord hold the user's click coordinates, which will be used
+	 * to determine what button if any are being clicked, and to take appropriate action.
+	 * 
+	 * valueLeft, valueRight store the randomized values of the two cards (one for each of the two card fronts)
+	 * score is a variable which is used to change the score. The value is one, which can be easily doubled, or
+	 * quadrupled in the event of a tie. 
+	 */
+	private Button playButton, resetButton, quitButton;
+
+	private boolean initialization = false;
+
+	private boolean paintIt = false;
+
+	private int xCoord; 
+	private int yCoord;
+
+
+	private int leftValue;
+	private int rightValue;
+
+
+	private int score = 1;
+
+
+	/**
+	 * The Game method will actually set up the entire screen and paint all of the objects which have been
+	 * previously defined. This includes buttons, and the window, and the unflipped card backs.
+	 * 
+	 */
+	public Game()
+	{
+		final int 	BUTTON_WIDTH = 66,
+				BUTTON_HEIGHT = 33;
+
+		setTitle("Let's Play War!");		
+		setLocation(50, 50);			
+		setSize(500, 500);				
+		setBackground(Color.white);		
+
+		leftSideBack.setup(50, 75); //the cardbacks are set up first because they appear before the game begins
+		rightSideBack.setup(350, 75); // and any cardfronts appear on the screen
+
+		/*
+		 *This sets up our buttons in 3 locations, all on the same line, but seperated by 150 pixels
+		 * so that they are properly spaced out. The button height and width, which were previously set up
+		 * are called as well as each receiving a unique label and color. We call the button class
+		 * which previously created a general button which is customized and defined here. 
+		 */
+		playButton = new Button("Play", Color.pink, 50, 200, BUTTON_WIDTH, BUTTON_HEIGHT);
+		resetButton = new Button("Reset", Color.yellow, 200, 200, BUTTON_WIDTH, BUTTON_HEIGHT);
+		quitButton = new Button("Quit", Color.cyan, 350, 200, BUTTON_WIDTH, BUTTON_HEIGHT);
+
+		setVisible(true);			//	This allows the button to appear
+
+		addMouseListener(this); // creates a mouseListener object for the buttons
+
+		initialization = true;
+	}
+	/**
+	 * Like in all the other classes, it makes sense to divide the paint and draw methods.
+	 * This class paints all the backs and fronts of the cards which are drawn in the BackCard and
+	 * Card classes respectively. This method actually paints the cards themselves to make them appear
+	 * This paint method draws the face down decks, the buttons, the graph,
+	 * and the left and right cards.
+	 * It will only paint the front cards, if paintIt is set to true, meaning that the user has clicked
+	 * play, prompting the cards to appear.
+	 */
+	public void paint(Graphics pane)
+	{
+
+
+		leftSideBack.paint(pane);	
+		rightSideBack.paint(pane);	
+		playButton.paint(pane);		
+		resetButton.paint(pane);	
+		quitButton.paint(pane);		
+		graph.paint(pane);			
+
+		if (paintIt)			
+		{							
+
+			leftCard.paint(pane);
+			rightCard.paint(pane);
+		}
+
+	}
+	/**
+	 * The method may have been set up in other methods, however the randomized values and suits
+	 * are chosen in the full card method. A random value between 1 and 4 for its suit and 1-13 for
+	 * it's value will be chosen and the values will be compared in the card method which holds a "value" 
+	 * and "suit" for each of the chosen ints in these programs.
+	 * This method is set to run each time the play button is called.
+	 */
+	private void fullCard()
+	{
+
+
+		int leftSuit = (int)(Math.random()*4)+1; //sets a suit and value for the left card
+		leftValue = (int)(Math.random()*13)+1;  // by randomly generating a value for each variable
+
+
+		int rightSuit = (int)(Math.random()*4)+1; //sets a suit and a value for the right card
+		rightValue= (int)(Math.random()*13)+1;	 // by randomly generating a value for each variable	
+
+
+		leftCard.setup(150, 75, leftValue, leftSuit); //uses the variables defined above to place the two cards
+		rightCard.setup(250, 75, rightValue, rightSuit); // and hold their suits and variables.
+	}
+
+	/**
+	 *The Rules method defines all the rules that were presented the user at the beginning of the game. In order
+	 *for war to work, the cards must be given a value based on their suit and value, and then the higher ordered
+	 *or value card will win.
+	 *Since ties are possible, the rules for a tie, and the definition of a tie must be also defined in this method
+	 *Nothing is painted, incremented, or shown in this method, and the previously defined variables of graph, score
+	 *leftValue/rightValue
+	 *
+	 *The score changes based on these rules.
+	 */
+	private void rules()
+	{
+
+		if (leftValue > rightValue)
+		{
+			graph.scoreChange(-(score)); // mod the score by one in favor of the left value. 
+			score = 1;
+		}
+		else if (rightValue > leftValue)
+		{
+			graph.scoreChange(score); // mod the score in favor of one in the right value
+			score = 1;
+		}
+		else
+		{
+			score = score * 2; // tie game, double the score for the next round, but do not alter the score.
+		}
+
+
+	}
+	/**
+	 * The mouseEntered() method is a requirement to capture the user's mouse movements, and tells the program
+	 * when the user is in the specific window.
+	 */
+	public void mouseEntered(MouseEvent event) 
+	{
+
+	}
+
+	/**
+	 * The mouseExited() method registers when the user's mouse leaves the window, and does nothing else.
+	 */
+	public void mouseExited(MouseEvent event) 
+	{
+
+	}
+	/**
+	 * the mousePressed button is called by the user's mouse click, it triggers the xCoord and yCoord variables
+	 * and defines them using them using the x and y coordinates from the mouse event.
+	 * The if statement used in the mousePressed will see if the x and y coordinates gathered from the mouse
+	 * click are in the coordinated for either the play, quit, and reset buttons. It doesn't activate the 
+	 * actions done by these buttons, just flips them, coloring them lighter if the person clicked
+	 * It then repaints the buttons to reflect the change in the buttons.
+	 */
+
+	public void mousePressed(MouseEvent event) 
+	{
+		xCoord = event.getX(); 
+		yCoord = event.getY();
+
+
+		if(playButton.isInside(xCoord, yCoord) == true) //checks to see if the user clicked the "play" button
+		{
+			playButton.flip(); //if yes? flips it
+		}
+
+		else if(resetButton.isInside(xCoord, yCoord) == true) // checks to see if the user clicked the "reset" button
+		{
+			resetButton.flip(); // if yes? flips it
+		}
+
+		else if(quitButton.isInside(xCoord, yCoord) == true) // checks to see if the user clicked in the "quit" button
+		{
+			quitButton.flip(); // if yes? flips it
+		}
+		repaint();  // repaints the buttons so the user can see the changes if there are any.
+	}
+
+	/**mouseReleased is triggered on the release of the mouse button, (the
+	 * Since there is a mouseClick method, the mouseRelease button checks to see if the user has unclicked it
+	 * it registers the mouse click, and the three if statements determine that if the button is clicked, it will
+	 * flip it to be dark again. If the mouse click is either not in the button, or not flipped up, nothing will 
+	 * occur in these statements
+	 */
+
+
+	public void mouseReleased(MouseEvent event) 
+	{
+		xCoord = event.getX(); // gets the coordinates for when the mouse is released
+		yCoord = event.getY();
+
+		if(playButton.isInside(xCoord, yCoord) == true) //checks for coordinates and flips it if necessary
+		{
+			playButton.flip();
+		}
+
+		else if(resetButton.isInside(xCoord, yCoord) == true) //checks for coordinates and flips it if necessary
+		{
+			resetButton.flip();
+		}
+
+		else if(quitButton.isInside(xCoord, yCoord) == true) //checks for coordinates and flips it if necessary
+		{
+			quitButton.flip();
+		}
+		repaint();  // repaints to reflect the changes if there are any, so that the user can see. 
+	}
+
+	/**
+	 * The mouseClicked method will collect information to play the game, it grabs the coordinates of the click
+	 * set in the coordX and coordY, it will switch the paintIt method previously called. If the mouse is clicked
+	 * you need to flip the appropriate button.
+	 * paintIt if true will execute the action of the previously pained playButton, it calls the rules,
+	 * flips the button, and paints the whole card which was compiled in the fullCard() method.
+	 * 
+	 * For the reset button, if the coordX and coordY buttons register coordinates in that area, paint it 
+	 * will be set to false, meaning that the new cards will not appear, and the score for both sides will
+	 * be reset to 0, and the table will be repainted.
+	 * 
+	 * The quit will simply use the system.exit command to close the program, and then the screen will be repainted
+	 * which effectively "closes" their game window. 
+	 */
+	public void mouseClicked(MouseEvent event) 
+	{
+
+
+		xCoord = event.getX(); 
+		yCoord = event.getY();
+		if(playButton.isInside(xCoord, yCoord) == true) 
+		{
+
+			paintIt = true; 
+			fullCard();  
+			rules(); 
+		}
+
+		else if(resetButton.isInside(xCoord, yCoord) == true) 
+		{
+
+			paintIt = false;
+			graph.setScore(0);
+		}
+
+		else if(quitButton.isInside(xCoord, yCoord) == true) 
+		{
+			System.exit(0); 
+		}
+		repaint();
+
+	}
+
+}
